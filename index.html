@@ -38,6 +38,10 @@
     .copy-btn:hover {
       background: #006663;
     }
+    [contenteditable]:focus {
+      outline: 2px dashed #007E7A;
+      outline-offset: 4px;
+    }
     @media only screen and (max-width:400px) {
       td.portrait-container {
         width: 130px !important;
@@ -66,7 +70,7 @@
 <!-- James Stapleton -->
 <div class="signature-container">
   <div class="signature-label">James Stapleton, Ph.D</div>
-  <div id="signature_0">
+  <div id="signature_0" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -105,7 +109,7 @@
 <!-- Brian Holdman -->
 <div class="signature-container">
   <div class="signature-label">Brian Holdman</div>
-  <div id="signature_1">
+  <div id="signature_1" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -144,7 +148,7 @@
 <!-- Jody Chaffin -->
 <div class="signature-container">
   <div class="signature-label">Jody Chaffin</div>
-  <div id="signature_2">
+  <div id="signature_2" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -186,7 +190,7 @@
 <!-- Craig McMahon -->
 <div class="signature-container">
   <div class="signature-label">Craig McMahon</div>
-  <div id="signature_3">
+  <div id="signature_3" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -228,7 +232,7 @@
 <!-- Iva Harbison -->
 <div class="signature-container">
   <div class="signature-label">Iva Harbison</div>
-  <div id="signature_4">
+  <div id="signature_4" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -270,7 +274,7 @@
 <!-- Charles Elliott -->
 <div class="signature-container">
   <div class="signature-label">Charles Elliott</div>
-  <div id="signature_5">
+  <div id="signature_5" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -309,7 +313,7 @@
 <!-- Kevin Kirchner -->
 <div class="signature-container">
   <div class="signature-label">Kevin Kirchner</div>
-  <div id="signature_6">
+  <div id="signature_6" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -348,7 +352,7 @@
 <!-- Jason Lowenthal-Hershey -->
 <div class="signature-container">
   <div class="signature-label">Jason Lowenthal-Hershey</div>
-  <div id="signature_7">
+  <div id="signature_7" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -390,7 +394,7 @@
 <!-- Shantanu Kashyap -->
 <div class="signature-container">
   <div class="signature-label">Shantanu Kashyap</div>
-  <div id="signature_8">
+  <div id="signature_8" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -432,7 +436,7 @@
 <!-- Liza Buerck -->
 <div class="signature-container">
   <div class="signature-label">Liza Buerck</div>
-  <div id="signature_9">
+  <div id="signature_9" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -474,7 +478,7 @@
 <!-- Cara Dirnberger -->
 <div class="signature-container">
   <div class="signature-label">Cara Dirnberger</div>
-  <div id="signature_10">
+  <div id="signature_10" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -516,7 +520,7 @@
 <!-- Brian Rhodes -->
 <div class="signature-container">
   <div class="signature-label">Brian Rhodes</div>
-  <div id="signature_11">
+  <div id="signature_11" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -558,7 +562,7 @@
 <!-- Rachel O'Loughlin -->
 <div class="signature-container">
   <div class="signature-label">Rachel O'Loughlin</div>
-  <div id="signature_12">
+  <div id="signature_12" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -600,7 +604,7 @@
 <!-- Shana Burden -->
 <div class="signature-container">
   <div class="signature-label">Shana Burden</div>
-  <div id="signature_13">
+  <div id="signature_13" contenteditable>
     <table cellspacing="0" cellpadding="0" border="0">
       <tbody>
         <tr>
@@ -640,6 +644,53 @@
 </div>
 
 <script type="text/javascript">
+var SIGNATURE_COUNT = 14;
+
+// Load saved signatures from localStorage on page load
+document.addEventListener('DOMContentLoaded', function() {
+  for (var i = 0; i < SIGNATURE_COUNT; i++) {
+    var saved = localStorage.getItem('signature_' + i);
+    if (saved) {
+      var el = document.querySelector('#signature_' + i);
+      if (el) {
+        // Note: innerHTML used here is safe since content comes from user's own localStorage
+        el.innerHTML = saved;
+      }
+    }
+  }
+
+  // Add input listeners to save changes and sync href attributes
+  for (var i = 0; i < SIGNATURE_COUNT; i++) {
+    (function(idx) {
+      var el = document.querySelector('#signature_' + idx);
+      if (el) {
+        el.addEventListener('input', function() {
+          // Sync mailto: links - update href to match visible text
+          var mailtoLinks = el.querySelectorAll('a[href^="mailto:"]');
+          mailtoLinks.forEach(function(link) {
+            var emailText = link.textContent.trim();
+            if (emailText) {
+              link.href = 'mailto:' + emailText;
+            }
+          });
+
+          // Sync tel: links - update href to match visible text (strip non-digits)
+          var telLinks = el.querySelectorAll('a[href^="tel:"]');
+          telLinks.forEach(function(link) {
+            var phoneText = link.textContent.trim();
+            var digitsOnly = phoneText.replace(/\D/g, '');
+            if (digitsOnly) {
+              link.href = 'tel:1' + digitsOnly.replace(/^1/, '');
+            }
+          });
+
+          localStorage.setItem('signature_' + idx, el.innerHTML);
+        });
+      }
+    })(i);
+  }
+});
+
 function copySignature(idx) {
   var el = document.querySelector('#signature_' + idx);
   var range = document.createRange();
