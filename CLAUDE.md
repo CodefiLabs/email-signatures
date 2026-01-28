@@ -34,3 +34,24 @@ https://raw.githubusercontent.com/CodefiLabs/email-signatures/{COMMIT_HASH}/emai
 - Primary teal: `#007E7A` / `#007F7B`
 - Green separator: `#73bf48`
 - Dark gray text: `#58595B`
+
+## Logo/Social Icons Spacing (IMPORTANT)
+
+The inner table containing the Codefi logo and social icons must NOT have `width="100%"`. This causes inconsistent spacing based on the length of the name/title/email content above it.
+
+**Correct:**
+```html
+<table cellspacing="0" cellpadding="0" border="0">
+```
+
+**Incorrect (causes extra space after logo):**
+```html
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+```
+
+The logo cell should have a fixed width matching the logo image:
+```html
+<td width="84" height="45" style="width: 84px;">
+```
+
+When adding new signatures, always copy from an existing signature that has correct spacing (no `width="100%"` on the inner table).
